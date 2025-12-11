@@ -1,57 +1,30 @@
 package org.skypro.skyshop.product;
 
-//Продукт с фиксированной ценой (без скидок). Наследует Product, implements Searchable.
+import java.util.UUID;
 
 public class FixPriceProduct extends Product {
 
-    //Конструктор: устанавливает name и fixed price.
-     // @param name Название продукта (не null/blank).
-    //@param price Фиксированная цена (>0).
-    //@throws IllegalArgumentException Если name null/blank или price <=0.
-
-    public FixPriceProduct(String name, double price) {
-        super(name, price);  // Вызываем конструктор Product (проверяет валидность)
+    public FixPriceProduct(UUID id, String name, double price) {
+        super(id, name, price);
     }
 
-    //Переопределение: не специальный продукт (нет скидки).
+    @Override
+    public String getFormattedPrice() {
+        return String.format("%.2f ₽ (фиксированная)", getPrice());
+    }
 
     @Override
     public boolean isSpecial() {
-        return false;
+        return true;  // Фиксированная цена — специальный
     }
-
-    //Переопределение: строковое представление с фиксированной ценой.
 
     @Override
     public String toString() {
-        return getName() + ": " + getPrice() + " (фиксированная цена)";
-    }
-
-    //Переопределение: search term (имя + цена).
-
-    @Override
-    public String getSearchTerm() {
-        return getName() + " " + getPrice();
-    }
-
-    //Переопределение: тип контента как String.
-
-    @Override
-    public String getContentType() {
-        return "PRODUCT";
-    }
-
-    //Переопределение: строковое представление для вывода.
-
-    @Override
-    public String getStringRepresentation() {
-        return getName() + " — " + getContentType() + " [fixed price: " + getPrice() + "]";
-    }
-
-    //Переопределение: имя от super.
-
-    @Override
-    public String getName() {
-        return super.getName();
+        return "FixPriceProduct{" +
+                "id=" + getId() +
+                ", name='" + getName() + '\'' +
+                ", price=" + getPrice() +
+                ", formattedPrice='" + getFormattedPrice() + '\'' +
+                '}';
     }
 }

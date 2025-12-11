@@ -1,66 +1,73 @@
 package org.skypro.skyshop.search;
 
-import java.util.Comparator;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.function.Supplier;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-//Поисковый движок: TreeSet<Searchable> с Comparator по длине name descending (длинные первыми).
-//add() игнор дубли по name. search() — Stream с filter + collect(toCollection с Supplier<TreeSet + comparator>).
-//getAll() — копия с comparator (фикс ClassCastException).
-//Searchable не Comparable, но comparator по getName().length() — полиморфно работает.
-
+// SearchEngine — сервис для поиска по Searchable объектам (Product/Article).
+// Ищет по getSearchTerm() (case-insensitive, по подстроке).
+// Можно расширить: полное слово, по ID и т.д.
 public class SearchEngine {
-    // Компаратор: сортировка по длине name убывание (длинные первыми, int.compare для safety)
-    private static final Comparator<Searchable> LENGTH_COMPARATOR =
-            (a, b) -> Integer.compare(b.getName().length(), a.getName().length());
+    private List<Searchable> items;  // Коллекция для индекса (Product + Article)
 
-    // Хранилище: TreeSet с comparator (отсортировано, unique по comparator — если длины равны, natural order)
-    private final Set<Searchable> items = new TreeSet<>(LENGTH_COMPARATOR);
+    // Конструктор: инициализирует пустой индекс.
+    public SearchEngine() {
+        this.items = new ArrayList<>();
+    }
 
-    //Добавление: проверка дубликата по name (Stream.anyMatch), добавление в TreeSet (с comparator).
-
-    public void add(Searchable item) {
-        if (item == null) return;
-        // Проверка дубликата по name (case-sensitive, как в задании)
-        boolean duplicate = items.stream()
-                .anyMatch(existing -> existing.getName().equals(item.getName()));
-        if (!duplicate) {
-            items.add(item);  // Добавляется с сортировкой (comparator)
+    // Добавляет объект в индекс (для поиска).
+    public void addItem(Searchable item) {
+        if (item != null) {
+            items.add(item);
         }
     }
 
-    //Поиск (задание 1): Один Stream с filter (name contains query, case-insensitive)
-     //+ collect(toCollection с Supplier<TreeSet + comparator>).
-    //Пустой query → пустой TreeSet (comparator).
+    // Добавляет коллекцию.
+    public void addItems(List<Searchable> newItems) {
+        if (newItems != null) {
+            items.addAll(newItems);
+        }
+    }
 
-    public Set<Searchable> search(String query) {
+    // Поиск по запросу: возвращает совпадения.
+    // @param query Строка поиска (не null).
+    // @return List<Searchable> (пустой, если ничего не найдено).
+    // @throws IllegalArgumentException если query null/empty.
+    public List<Searchable> search(String query) {
         if (query == null || query.trim().isEmpty()) {
-            // Пустой: новый TreeSet с comparator (фикс: пустой, но sorted-ready)
-            return new TreeSet<>(LENGTH_COMPARATOR);
+            throw new IllegalArgumentException("Запрос поиска не может быть null или пустым");
         }
-        String lowerQuery = query.toLowerCase();
-        // Supplier: создаёт TreeSet с comparator
-        Supplier<TreeSet<Searchable>> treeSetSupplier = () -> new TreeSet<>(LENGTH_COMPARATOR);
+        String lowerQuery = query.toLowerCase().trim();
         return items.stream()
-                .filter(item ->item.getName().toLowerCase().contains(lowerQuery))// Filter
-                .collect(Collectors.toCollection(treeSetSupplier));  // Collect в TreeSet (sorted)
+                .filter(item -> item.getSearchTerm().toLowerCase().contains(lowerQuery))  // Case-insensitive подстрока
+                .collect(Collectors.toList());
     }
 
-    //Все элементы: КОПИЯ TreeSet с comparator (фикс ClassCastException: явный LENGTH_COMPARATOR).
-    //Immutable для безопасности.
-
-    public Set<Searchable> getAll() {
-        // Фикс: new TreeSet с comparator + items (копирует и сортирует заново, даже если items уже TreeSet)
-        return new TreeSet<>();
+    // Поиск по ID (уникальный).
+    public Searchable findById(UUID id) {
+        if (id == null) {
+            return null;
+        }
+        return items.stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
-    public int size() {
-        return items.size();
+
+    // Получить все: для теста.
+    public List<Searchable> getAll() {
+        return new ArrayList<>(items);  // Копия для immutable
     }
 
-    //Для теста: получить comparator (не обязательно).
-    public Comparator<Searchable> getComparator() {
-        return LENGTH_COMPARATOR;
+    // Очистить индекс.
+    public void clear() {
+        items.clear();
+    }
+
+    // toString: количество результатов.
+    @Override
+    public String toString() {
+        return "SearchEngine: " + items.size() + " объектов в индексе";
     }
 }

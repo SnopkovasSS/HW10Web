@@ -1,18 +1,23 @@
 package org.skypro.skyshop.article;
 
 import org.skypro.skyshop.search.Searchable;
+import java.util.UUID;
 
-public class Article implements Searchable {
-    private final String title;  // Немодифицируемое
-    private final String text;   // Немодифицируемое
+public class Article implements Searchable {  // implements Searchable (обязательно!)
+    private final UUID id;
+    private final String title;
+    private final String text;
 
-    // Конструктор
-    public Article(String title, String text) {
+    public Article(UUID id, String title, String text) {
+        this.id = (id == null) ? UUID.randomUUID() : id;
         this.title = title;
         this.text = text;
     }
 
-    // Геттеры (без сеттеров)
+    public UUID getId() {
+        return id;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -21,27 +26,18 @@ public class Article implements Searchable {
         return text;
     }
 
-    // toString(): "Название\nТекст" (как в шаге 1)
-    @Override
-    public String toString() {
-        return title + "\n" + text;
-    }
-
-    // Реализация Searchable (обязательно!)
+    // Реализация интерфейса Searchable (с @Override)
     @Override
     public String getSearchTerm() {
-        return toString();  // Поиск по полному тексту: название + текст
+        return getTitle();  // Поиск по заголовку
     }
 
-    @Override
-    public String getContentType() {
-        return "ARTICLE";  // Тип: ARTICLE
+    // toString() без @Override (не нужно, просто переопределяем Object)
+    public String toString() {
+        return "Article{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", text='" + text + '\'' +
+                '}';
     }
-
-    @Override
-    public String getName() {
-        return getTitle();  // Имя = название статьи
-    }
-
-    // getStringRepresentation() — используем default из интерфейса (не переопределяем)
 }
