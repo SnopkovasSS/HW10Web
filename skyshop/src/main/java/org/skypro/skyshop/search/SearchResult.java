@@ -1,7 +1,7 @@
 package org.skypro.skyshop.search;
 
 import org.skypro.skyshop.article.Article;
-import org.skypro.skyshop.product.Product;
+import org.skypro.skyshop.model.basket.product.Product;
 
 public class SearchResult {
     private final String type;  // "Product" или "Article"

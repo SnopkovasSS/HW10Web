@@ -1,26 +1,26 @@
-package org.skypro.skyshop.product;
+package org.skypro.skyshop.model.basket.product;
 
 import java.util.UUID;
 
-public class FixPriceProduct extends Product {
+public class SimpleProduct extends Product {
 
-    public FixPriceProduct(UUID id, String name, double price) {
+    public SimpleProduct(UUID id, String name, double price) {
         super(id, name, price);
     }
 
     @Override
     public String getFormattedPrice() {
-        return String.format("%.2f ₽ (фиксированная)", getPrice());
+        return String.format("%.2f ₽", getPrice());
     }
 
     @Override
     public boolean isSpecial() {
-        return true;  // Фиксированная цена — специальный
+        return false;  // Обычный продукт
     }
 
     @Override
     public String toString() {
-        return "FixPriceProduct{" +
+        return "SimpleProduct{" +
                 "id=" + getId() +
                 ", name='" + getName() + '\'' +
                 ", price=" + getPrice() +

@@ -3,7 +3,7 @@ package org.skypro.skyshop.service;
 import org.skypro.skyshop.model.basket.BasketItem;
 import org.skypro.skyshop.model.basket.ProductBasket;
 import org.skypro.skyshop.model.basket.UserBasket;
-import org.skypro.skyshop.product.Product;
+import org.skypro.skyshop.model.basket.product.Product;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

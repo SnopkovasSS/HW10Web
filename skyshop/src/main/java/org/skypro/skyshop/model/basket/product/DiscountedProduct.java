@@ -1,4 +1,4 @@
-package org.skypro.skyshop.product;
+package org.skypro.skyshop.model.basket.product;
 
 import java.util.UUID;
 
