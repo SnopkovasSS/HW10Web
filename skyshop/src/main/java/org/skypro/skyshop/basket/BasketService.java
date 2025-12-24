@@ -1,4 +1,4 @@
-package org.skypro.skyshop.service;
+package org.skypro.skyshop.basket;
 
 import org.skypro.skyshop.exception.ProductNotFoundException;
 import org.skypro.skyshop.model.Product;
@@ -10,20 +10,19 @@ import java.util.List;
 import java.util.Map;
 
 public class BasketService {
-    private final SearchEngine searchEngine;  // Для поиска продуктов
-    private final Map<String, List<Product>> baskets = new HashMap<>();  // Корзины по магазинам
+    private final SearchEngine searchEngine;
+    private final Map<String, List<Product>> baskets = new HashMap<>();
 
     public BasketService(SearchEngine searchEngine) {
         this.searchEngine = searchEngine;
     }
 
-        public void addToBasket(int id, String storeName) {
+    public void addToBasket(int id, String storeName) {
         Searchable found = searchEngine.findById(id);
         if (found == null || !(found instanceof Product)) {
             throw new ProductNotFoundException("Product not found with ID: " + id);
         }
         Product product = (Product) found;
-
         baskets.computeIfAbsent(storeName, k -> new ArrayList<>()).add(product);
     }
 
@@ -31,12 +30,11 @@ public class BasketService {
         return new ArrayList<>(baskets.getOrDefault(storeName, new ArrayList<>()));
     }
 
-
     public void clearBasket(String storeName) {
         baskets.remove(storeName);
     }
 
-        public Map<String, List<Product>> getAllBaskets() {
+    public Map<String, List<Product>> getAllBaskets() {
         return new HashMap<>(baskets);
     }
 }

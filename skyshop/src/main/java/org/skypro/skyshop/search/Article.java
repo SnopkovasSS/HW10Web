@@ -1,41 +1,21 @@
 package org.skypro.skyshop.search;
 
-import java.util.UUID;
-
 public class Article implements Searchable {
-    private final UUID id;
-    private final String title;
-    private final String text;
+    private final int id;
+    private final String searchTerm;
 
-    public Article(UUID id, String title, String text) {
-        this.id = (id == null) ? UUID.randomUUID() : id;
-        this.title = title;
-        this.text = text;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getText() {
-        return text;
+    public Article(int id, String searchTerm) {
+        this.id = id;
+        this.searchTerm = searchTerm;
     }
 
     @Override
     public String getSearchTerm() {
-        return getTitle();  // Поиск по заголовку статьи
+        return searchTerm;
     }
 
     @Override
-    public String toString() {
-        return "Article{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", text='" + text + '\'' +
-                '}';
+    public int getId() {
+        return id;
     }
 }

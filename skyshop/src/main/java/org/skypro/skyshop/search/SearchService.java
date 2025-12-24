@@ -1,13 +1,10 @@
-package org.skypro.skyshop.service;
+package org.skypro.skyshop.search;
 
-
-import org.skypro.skyshop.search.Searchable;
-import org.skypro.skyshop.search.StorageService;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class SearchService {
-    private final StorageService storage;  // Зависимость
+    private final StorageService storage;
 
     public SearchService(StorageService storage) {
         this.storage = storage;
@@ -23,3 +20,4 @@ public class SearchService {
         return storage.getById(id);
     }
 }
+

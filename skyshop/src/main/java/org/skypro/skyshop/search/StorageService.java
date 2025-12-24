@@ -1,30 +1,26 @@
-package org.skypro.skyshop.service;
-
+package org.skypro.skyshop.search;
 import org.skypro.skyshop.model.SimpleProduct;
-import org.skypro.skyshop.search.Article;
-import org.skypro.skyshop.search.Searchable;
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class StorageService {
-    private final List<Searchable> storage = new ArrayList<>();  // Хранилище для поиска
-    private final Map<Integer, Searchable> byId = new HashMap<>();  // Быстрый поиск по ID
+    private final List<Searchable> storage = new ArrayList<>();
+    private final Map<Integer, Searchable> byId = new HashMap<>();
 
     public StorageService() {
-        // Инициализация тестовыми данными
         add(new SimpleProduct(1, "apple phone", 1000.0));
         add(new SimpleProduct(2, "samsung tv", 500.0));
-        add(new Article(3, "best phone 2023"));
+        add(new SimpleProduct(4, "laptop dell", 1500.0));
     }
 
     public void add(Searchable item) {
-        storage.add(item);
-        if (item.getId() != 0) {
-            byId.put(item.getId(), item);
+        if (item != null) {
+            storage.add(item);
+            if (item.getId() != 0) {  // Теперь работает!
+                byId.put(item.getId(), item);
+            }
         }
     }
 
@@ -39,5 +35,9 @@ public class StorageService {
     public void clear() {
         storage.clear();
         byId.clear();
+    }
+
+    public int size() {
+        return storage.size();
     }
 }

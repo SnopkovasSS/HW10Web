@@ -1,55 +1,43 @@
 package org.skypro.skyshop.controller;
 
-import org.skypro.skyshop.model.basket.UserBasket;
-import org.skypro.skyshop.service.BasketService;
-import org.skypro.skyshop.service.SearchService;
-import org.skypro.skyshop.service.StorageService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.skypro.skyshop.basket.BasketService;
+import org.skypro.skyshop.model.Product;
+import org.skypro.skyshop.search.SearchEngine;
+import org.skypro.skyshop.search.Searchable;
 
 import java.util.List;
-import java.util.UUID;
 
-@RestController
 public class ShopController {
-    private final StorageService storageService;
-    private final SearchService searchService;
-    private final BasketService basketService;  // Inject для корзины
+    private final SearchEngine searchEngine;
+    private final BasketService basketService;
 
-    public ShopController(StorageService storageService, SearchService searchService, BasketService basketService) {
-        this.storageService = storageService;
-        this.searchService = searchService;
+    public ShopController(SearchEngine searchEngine, BasketService basketService) {
+        this.searchEngine = searchEngine;
         this.basketService = basketService;
     }
 
-    @GetMapping("/products")
-    public ResponseEntity<List> getProducts() {
-        return ResponseEntity.ok(storageService.getProducts());
+    // Поиск продуктов (не Spring, просто метод)
+    public List<Searchable> searchProducts(String term) {
+        return searchEngine.search(term);
     }
 
-    @GetMapping("/articles")
-    public ResponseEntity<List> getArticles() {
-        return ResponseEntity.ok(storageService.getArticles());
+    // Добавить в корзину
+    public String addToBasket(int id, String storeName) {
+        try {
+            basketService.addToBasket(id, storeName);
+            return "Product added to basket!";
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List> search(@RequestParam String pattern) {
-        return ResponseEntity.ok(searchService.search(pattern));
+    // Получить содержимое корзины
+    public List<Product> getBasket(String storeName) {
+        return basketService.getBasket(storeName);
     }
 
-    // Шаг 3: Добавление в корзину (GET /basket/{id}, PathVariable)
-    @GetMapping("/basket/{id}")
-    public String addProduct(@PathVariable("id") UUID id) {
-        basketService.addToBasket(id);
-        return "Продукт успешно добавлен";  // Строка по заданию
-    }
-
-    // Шаг 3: Отображение корзины (GET /basket)
-    @GetMapping("/basket")
-    public UserBasket getUserBasket() {
-        return basketService.getUserBasket();  // JSON: items + total
+    // Бонус: Получить все продукты
+    public List<Searchable> getAllProducts() {
+        return searchEngine.getAll();
     }
 }
