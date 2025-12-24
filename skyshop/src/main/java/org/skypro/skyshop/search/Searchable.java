@@ -1,7 +1,10 @@
 package org.skypro.skyshop.search;
 
-public interface Searchable {
-    String getSearchTerm();  // Для поиска: name (Product) или title (Article)
 
-    Object getId();
+
+public interface Searchable {
+    String getSearchTerm();  // Для поиска по имени/заголовку
+
+    // Добавь это (int или long — по дизайну твоих продуктов)
+    int getId();  // Уникальный ID для идентификации
 }

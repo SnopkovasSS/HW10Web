@@ -1,38 +1,25 @@
 package org.skypro.skyshop.search;
 
-import org.skypro.skyshop.article.Article;
-import org.skypro.skyshop.product.Product;
+import java.util.UUID;
 
 public class SearchResult {
-    private final String type;  // "Product" или "Article"
-    private final Searchable searchable;
+    private String searchTerm;
+    private UUID id;  // Или другие поля по необходимости
 
-    private SearchResult(String type, Searchable searchable) {
-        this.type = type;
-        this.searchable = searchable;
+    // Конструктор
+    public SearchResult(String searchTerm, UUID id) {
+        this.searchTerm = searchTerm;
+        this.id = id;
     }
 
-    // Фабричный метод: создаёт SearchResult на основе типа
+    // Static factory: fromSearchable (теперь обрабатывает все типы — без switch, просто копирует)
     public static SearchResult fromSearchable(Searchable s) {
-        if (s instanceof Product) {
-            return new SearchResult("Product", s);
-        } else if (s instanceof Article) {
-            return new SearchResult("Article", s);
-        }
-        throw new IllegalArgumentException("Unknown searchable type: " + s.getClass());
+        if (s == null) return null;
+        // Универсально для всех Searchable (без проверки типа — фиксит "Unknown type")
+        return new SearchResult(s.getSearchTerm(), UUID.randomUUID());  // Адаптируй id если есть getId() в Searchable
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public Searchable getSearchable() {
-        return searchable;
-    }
-
-    @Override
-    public String toString() {
-        return "SearchResult{" +
-                "type='"+ type + '\'' +     ", searchable=" + searchable + '}';
-    }
+    // Геттеры
+    public String getSearchTerm() { return searchTerm; }
+    public UUID getId() { return id; }
 }

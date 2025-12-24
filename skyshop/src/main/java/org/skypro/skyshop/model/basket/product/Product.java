@@ -1,7 +1,19 @@
-package org.skypro.skyshop.product;
+package org.skypro.skyshop.model.basket.product;
 
 import org.skypro.skyshop.search.Searchable;
+
 import java.util.UUID;
+
+public interface Product extends Searchable {
+    // Дополнительные методы для продуктов (если нужны: getPrice() и т.д.)
+    double getPrice();
+
+
+public interface Product extends Searchable {
+    // Дополнительные методы для продуктов (если нужны: getPrice() и т.д.)
+    double getPrice();
+
+
 
 public abstract class Product implements Searchable {
     private final UUID id;
@@ -14,7 +26,7 @@ public abstract class Product implements Searchable {
         this.price = price;
     }
 
-    public UUID getId() {
+    public int getId() {
         return id;
     }
 
